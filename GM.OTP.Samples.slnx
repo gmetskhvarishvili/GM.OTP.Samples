@@ -1,0 +1,33 @@
+<Solution>
+  <Folder Name="/Solution Items/Meta/">
+    <File Path="README.md" />
+    <File Path="CONTRIBUTING.md" />
+    <File Path="LICENSE" />
+  </Folder>
+  <Folder Name="/Solution Items/Build/">
+    <File Path=".editorconfig" />
+    <File Path=".gitattributes" />
+    <File Path=".gitignore" />
+  </Folder>
+  <Folder Name="/Solution Items/CI/">
+    <File Path=".github/workflows/ci.yml" />
+  </Folder>
+  <Folder Name="/src/Api/">
+    <Project Path="GM.OTP.Sample.API/GM.OTP.Sample.API.csproj" />
+  </Folder>
+  <Folder Name="/src/Core/">
+    <Project Path="GM.OTP.Sample.Application/GM.OTP.Sample.Application.csproj" />
+    <Project Path="GM.OTP.Sample.Common/GM.OTP.Sample.Common.csproj" />
+    <Project Path="GM.OTP.Sample.Domain/GM.OTP.Sample.Domain.csproj" />
+    <Project Path="GM.OTP.Sample.Infrastructure/GM.OTP.Sample.Infrastructure.csproj" />
+    <Project Path="GM.OTP.Sample.Persistence/GM.OTP.Sample.Persistence.csproj" />
+  </Folder>
+  <Folder Name="/src/Workers/">
+    <Project Path="GM.OTP.Sample.Producer.Worker/GM.OTP.Sample.Producer.Worker.csproj" />
+    <Project Path="GM.OTP.Sample.Consumer.Worker/GM.OTP.Sample.Consumer.Worker.csproj" />
+    <Project Path="GM.OTP.Sample.Worker/GM.OTP.Sample.Worker.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/GM.OTP.Sample.Tests/GM.OTP.Sample.Tests.csproj" />
+  </Folder>
+</Solution>

@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="GM.EntityFramework.Persistence" Version="1.2.1" />
+        <PackageReference Include="GM.Messaging.Domain" Version="1.2.0" />
+        <PackageReference Include="GM.Messaging.Persistence" Version="1.2.0" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.10">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.10">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="10.0.10" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="10.0.10" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.10" />
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="GM.OTP" Version="1.1.0" />
+        <PackageReference Include="GM.OTP.Persistence" Version="1.1.0" />
+        <ProjectReference Include="..\GM.OTP.Sample.Application\GM.OTP.Sample.Application.csproj" />
+        <ProjectReference Include="..\GM.OTP.Sample.Common\GM.OTP.Sample.Common.csproj" />
+        <ProjectReference Include="..\GM.OTP.Sample.Domain\GM.OTP.Sample.Domain.csproj" />
+    </ItemGroup>
+
+</Project>
