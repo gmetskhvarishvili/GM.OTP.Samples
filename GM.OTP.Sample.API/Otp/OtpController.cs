@@ -13,7 +13,7 @@ namespace GM.OTP.Sample.API.Otp;
 [ApiController]
 [ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/[controller]")]
-public class OtpController : BaseController
+public sealed class OtpController : BaseController
 {
     /// <summary>
     /// Generate OTP

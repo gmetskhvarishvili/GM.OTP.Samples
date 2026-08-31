@@ -3,6 +3,7 @@ using GM.OTP;
 using GM.OTP.Sample.Infrastructure;
 using GM.OTP.Sample.Persistence;
 using GM.OTP.Sample.Persistence.Context;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
 
 var builder = ProgramExtension.CreateGMBuilder(args);
@@ -17,6 +18,8 @@ builder.Services.AddGMOtp();
 builder.Services.AddPersistence(builder.Configuration);
 builder.Services.AddInfrastructure(builder.Configuration);
 
+builder.Services.AddHealthChecks();
+
 var app = builder.Build();
 
 app.UseRouting();
@@ -25,6 +28,11 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseGMServices();
+
+// Liveness must not depend on downstream dependencies, so it runs no checks; readiness runs
+// every registered health check (none here yet). See engineering baseline §11.
+app.MapHealthChecks("/health/live", new HealthCheckOptions { Predicate = _ => false });
+app.MapHealthChecks("/health/ready");
 
 using (var scope = app.Services.CreateScope())
 {
@@ -40,7 +48,7 @@ using (var scope = app.Services.CreateScope())
 
             var logger = scope.ServiceProvider.GetService<ILogger<ApplicationDbContextSeed>>();
             if (logger != null)
-                new ApplicationDbContextSeed().SeedAsync(context, logger).Wait();
+                await ApplicationDbContextSeed.SeedAsync(context, logger);
         }
     }
     catch (Exception ex)
@@ -50,4 +58,4 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-app.Run();
+await app.RunAsync();

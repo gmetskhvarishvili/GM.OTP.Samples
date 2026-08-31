@@ -4,11 +4,11 @@ using GM.Messaging.Domain.Events;
 
 namespace GM.OTP.Sample.Domain.BoundedContext.MessageBoundedContext.OutboxMessageAggregate;
 
-public class OutboxMessage : GM.Messaging.Domain.Outbox.OutboxMessage, IAggregateRoot
+public sealed class OutboxMessage : GM.Messaging.Domain.Outbox.OutboxMessage, IAggregateRoot
 {
     private OutboxMessage() { }
 
-    public new static OutboxMessage From<TEvent>(Guid? userId, TEvent evt, JsonSerializerOptions? options = null)
+    public static OutboxMessage From<TEvent>(Guid? userId, TEvent evt, JsonSerializerOptions? options = null)
         where TEvent : IIntegrationEvent =>
         new()
         {

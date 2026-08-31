@@ -1,8 +1,11 @@
 namespace GM.OTP.Sample.API.Otp;
 
-public class GenerateOtpRequestModel
+/// <summary>
+/// Request payload to generate a new OTP challenge.
+/// </summary>
+public sealed record GenerateOtpRequestModel
 {
-    public string? Subject { get; set; }
-    public string? Destination { get; set; }
-    public string? Purpose { get; set; }
+    public required string Subject { get; init; }
+    public required string Destination { get; init; }
+    public required string Purpose { get; init; }
 }

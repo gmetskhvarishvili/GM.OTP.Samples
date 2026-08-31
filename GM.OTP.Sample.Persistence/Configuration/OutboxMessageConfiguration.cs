@@ -3,4 +3,4 @@ using GM.OTP.Sample.Domain.BoundedContext.MessageBoundedContext.OutboxMessageAgg
 
 namespace GM.OTP.Sample.Persistence.Configuration;
 
-public class OutboxMessageConfiguration() : OutboxMessageConfiguration<OutboxMessage>("outbox_messages");
+public sealed class OutboxMessageConfiguration() : OutboxMessageConfiguration<OutboxMessage>("outbox_messages");

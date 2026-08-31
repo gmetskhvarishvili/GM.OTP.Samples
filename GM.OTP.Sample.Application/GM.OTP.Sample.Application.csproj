@@ -8,12 +8,12 @@
 
     <ItemGroup>
         <PackageReference Include="GM.API.Application" Version="1.4.0" />
-        <PackageReference Include="GM.Mediator" Version="1.3.3" />
-        <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.10" />
+        <PackageReference Include="GM.Mediator" Version="1.3.5" />
+        <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.11" />
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="GM.OTP" Version="1.1.0" />
+      <PackageReference Include="GM.OTP" Version="1.1.1" />
       <ProjectReference Include="..\GM.OTP.Sample.Common\GM.OTP.Sample.Common.csproj" />
       <ProjectReference Include="..\GM.OTP.Sample.Domain\GM.OTP.Sample.Domain.csproj" />
     </ItemGroup>

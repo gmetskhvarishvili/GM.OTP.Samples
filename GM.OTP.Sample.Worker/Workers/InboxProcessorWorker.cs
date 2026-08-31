@@ -14,7 +14,7 @@ namespace GM.OTP.Sample.Worker.Workers;
 /// mark and the outbox write commit together. A per-message scope keeps one failure from polluting the
 /// change tracker used for the next message.
 /// </summary>
-public class InboxProcessorWorker(
+public sealed class InboxProcessorWorker(
     IServiceScopeFactory scopeFactory,
     ILogger<InboxProcessorWorker> logger,
     IConfiguration configuration)
@@ -155,18 +155,18 @@ public class InboxProcessorWorker(
         logger.LogWarning("Marked inbox message {EventId} as failed: {Error}", eventId, error);
     }
 
-    private async Task HandleEventAsync(string eventType, string payload, IMediator mediator, CancellationToken cancellationToken)
+    private static async Task HandleEventAsync(string eventType, string payload, IMediator mediator, CancellationToken cancellationToken)
     {
         var typeFullName = eventType.Contains('.') ? eventType :
-            EventTypeMap.Values.FirstOrDefault(v => v.EndsWith('.' + eventType)) ?? eventType;
+            EventTypeMap.Values.FirstOrDefault(v => v.EndsWith('.' + eventType, StringComparison.Ordinal)) ?? eventType;
 
         switch (typeFullName)
         {
-            case var t when t.EndsWith(nameof(UserConfirmationInitiatedIntegrationEvent)):
+            case var t when t.EndsWith(nameof(UserConfirmationInitiatedIntegrationEvent), StringComparison.Ordinal):
                 await HandleUserConfirmationInitiatedAsync(payload, mediator, cancellationToken);
                 break;
 
-            case var t when t.EndsWith(nameof(OtpRequestedIntegrationEvent)):
+            case var t when t.EndsWith(nameof(OtpRequestedIntegrationEvent), StringComparison.Ordinal):
                 await HandleOtpRequestedAsync(payload, mediator, cancellationToken);
                 break;
 
@@ -175,7 +175,7 @@ public class InboxProcessorWorker(
         }
     }
 
-    private async Task HandleUserConfirmationInitiatedAsync(string payload, IMediator mediator, CancellationToken cancellationToken)
+    private static async Task HandleUserConfirmationInitiatedAsync(string payload, IMediator mediator, CancellationToken cancellationToken)
     {
         var evt = JsonSerializer.Deserialize<UserConfirmationInitiatedIntegrationEvent>(payload)
                   ?? throw new InvalidOperationException("Inbox payload could not be deserialized.");
@@ -192,7 +192,7 @@ public class InboxProcessorWorker(
         await mediator.Send(command, cancellationToken);
     }
 
-    private async Task HandleOtpRequestedAsync(string payload, IMediator mediator, CancellationToken cancellationToken)
+    private static async Task HandleOtpRequestedAsync(string payload, IMediator mediator, CancellationToken cancellationToken)
     {
         var evt = JsonSerializer.Deserialize<OtpRequestedIntegrationEvent>(payload)
                   ?? throw new InvalidOperationException("Inbox payload could not be deserialized.");

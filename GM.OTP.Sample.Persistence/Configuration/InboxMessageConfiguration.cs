@@ -3,4 +3,4 @@ using GM.OTP.Sample.Domain.BoundedContext.MessageBoundedContext.InboxMessageAggr
 
 namespace GM.OTP.Sample.Persistence.Configuration;
 
-public class InboxMessageConfiguration() : InboxMessageConfiguration<InboxMessage>("inbox_messages");
+public sealed class InboxMessageConfiguration() : InboxMessageConfiguration<InboxMessage>("inbox_messages");

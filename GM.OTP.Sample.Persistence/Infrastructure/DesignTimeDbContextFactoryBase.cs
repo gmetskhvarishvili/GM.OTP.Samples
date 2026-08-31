@@ -1,3 +1,4 @@
+using System.Globalization;
 using GM.OTP.Sample.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
@@ -13,13 +14,14 @@ public abstract class DesignTimeDbContextFactoryBase<TContext> :
 
     public TContext CreateDbContext(string[] args)
     {
-        var basePath = Directory.GetCurrentDirectory() + string.Format("{0}..{0}GM.OTP.Sample.API", Path.DirectorySeparatorChar);
+        var basePath = Directory.GetCurrentDirectory() +
+                       string.Format(CultureInfo.InvariantCulture, "{0}..{0}GM.OTP.Sample.API", Path.DirectorySeparatorChar);
         return Create(basePath, Environment.GetEnvironmentVariable(AspNetCoreEnvironment));
     }
 
     protected abstract TContext CreateNewInstance(DbContextOptions<TContext> options);
 
-    private TContext Create(string basePath, string environmentName)
+    private TContext Create(string basePath, string? environmentName)
     {
         var configuration = new ConfigurationBuilder()
             .SetBasePath(basePath)
@@ -34,7 +36,7 @@ public abstract class DesignTimeDbContextFactoryBase<TContext> :
         return Create(connectionString);
     }
 
-    private TContext Create(string connectionString)
+    private TContext Create(string? connectionString)
     {
         if (string.IsNullOrEmpty(connectionString))
         {

@@ -3,7 +3,7 @@ using GM.OTP.Domain.Abstractions;
 
 namespace GM.OTP.Sample.Infrastructure.Services;
 
-public class CodeGenerator : ICodeGenerator
+public sealed class CodeGenerator : ICodeGenerator
 {
     public string GenerateNumericCode(int length)
     {

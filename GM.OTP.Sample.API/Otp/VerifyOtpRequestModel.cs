@@ -1,8 +1,11 @@
 namespace GM.OTP.Sample.API.Otp;
 
-public class VerifyOtpRequestModel
+/// <summary>
+/// Request payload to verify a previously generated OTP challenge.
+/// </summary>
+public sealed record VerifyOtpRequestModel
 {
-    public string? Subject { get; set; }
-    public string? Purpose { get; set; }
-    public string? Code { get; set; }
+    public required string Subject { get; init; }
+    public required string Purpose { get; init; }
+    public required string Code { get; init; }
 }

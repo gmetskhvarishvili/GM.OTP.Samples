@@ -3,4 +3,4 @@ using GM.OTP.Sample.Domain.BoundedContext.OtpBoundedContext.OtpChallengeAggregat
 
 namespace GM.OTP.Sample.Persistence.Configuration;
 
-public class OtpChallengeConfiguration() : OtpChallengeConfiguration<OtpChallenge>("application", "OtpChallenges");
+public sealed class OtpChallengeConfiguration() : OtpChallengeConfiguration<OtpChallenge>("application", "OtpChallenges");

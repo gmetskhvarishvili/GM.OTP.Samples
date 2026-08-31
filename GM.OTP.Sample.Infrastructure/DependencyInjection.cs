@@ -35,25 +35,13 @@ public static class DependencyInjection
         return services;
     }
     
+    /// <summary>
+    /// Same OTP services as <see cref="AddInfrastructure"/>, registered under a worker-specific
+    /// entry point so the API and the inbox-processing worker can evolve independently later.
+    /// </summary>
     public static IServiceCollection AddWorkerInfrastructure(
-        this IServiceCollection services, IConfiguration configuration)
-    {
-        var otpOptions = new OtpOptions();
-        configuration.GetSection("OtpOptions").Bind(otpOptions);
-        services.AddSingleton(otpOptions);
-
-        services.AddSingleton<ICodeGenerator, CodeGenerator>();
-        services.AddSingleton<ICodeHasher, CodeHasher>();
-        services.AddSingleton<IDateTimeProvider, SystemDateTimeProvider>();
-
-        services.AddSingleton<OtpManager>(sp => new OtpManager(
-            sp.GetRequiredService<ICodeGenerator>(),
-            sp.GetRequiredService<ICodeHasher>(),
-            sp.GetRequiredService<IDateTimeProvider>(),
-            sp.GetRequiredService<OtpOptions>()));
-        
-        return services;
-    }
+        this IServiceCollection services, IConfiguration configuration) =>
+        services.AddInfrastructure(configuration);
     
     public static IServiceCollection AddConsumerWorkerInfrastructure(
         this IServiceCollection services,

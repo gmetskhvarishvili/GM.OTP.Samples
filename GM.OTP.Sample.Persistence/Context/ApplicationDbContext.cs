@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GM.OTP.Sample.Persistence.Context;
 
+// Not sealed: DesignTimeDbContextFactoryBase<TContext> constrains TContext to ApplicationDbContext,
+// which requires an unsealed bound even though only this type is ever substituted.
 public class ApplicationDbContext(
     DbContextOptions<ApplicationDbContext> options,
     IClock? clock = null) : GenericDbContext(options)
