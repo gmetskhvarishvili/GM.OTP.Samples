@@ -9,16 +9,16 @@ using GM.OTP.Services;
 
 namespace GM.OTP.Sample.Application.Otp.Commands.GenerateOtp;
 
-public class GenerateOtpCommand : IRequest<GenerateOtpResult>
+public sealed record GenerateOtpCommand : IRequest<GenerateOtpResult>
 {
-    public string? Subject { get; set; }
-    public string? Destination { get; set; }
-    public string? Purpose { get; set; }
-    public int Channel { get; set; }
-    public Guid? UserId { get; set; }
+    public required string Subject { get; init; }
+    public required string Destination { get; init; }
+    public required string Purpose { get; init; }
+    public int Channel { get; init; }
+    public Guid? UserId { get; init; }
 }
 
-public class GenerateOtpCommandValidator : AbstractValidator<GenerateOtpCommand>
+public sealed class GenerateOtpCommandValidator : AbstractValidator<GenerateOtpCommand>
 {
     public GenerateOtpCommandValidator()
     {
@@ -28,7 +28,7 @@ public class GenerateOtpCommandValidator : AbstractValidator<GenerateOtpCommand>
     }
 }
 
-public class GenerateOtpCommandHandler(
+public sealed class GenerateOtpCommandHandler(
     OtpManager otpManager,
     IUnitOfWork unitOfWork)
     : IRequestHandler<GenerateOtpCommand, GenerateOtpResult>
@@ -52,27 +52,27 @@ public class GenerateOtpCommandHandler(
             c.Invalidate(nowUtc);
             unitOfWork.OtpChallengeRepository.Update(c);
         }
-        
-        var data = otpManager.Generate(request.Subject!, request.Destination!);
+
+        var data = otpManager.Generate(request.Subject, request.Destination);
 
         var challenge = OtpChallenge.Create(
-            request.Subject!,
-            request.Destination!,
+            request.Subject,
+            request.Destination,
             data.CodeHash,
             data.Salt,
-            request.Purpose!,
+            request.Purpose,
             data.ExpiresAtUtc,
             data.MaxAttempts,
             request.UserId);
 
         await unitOfWork.OtpChallengeRepository.AddAsync(challenge, cancellationToken);
-        
+
         var text = data.PlainCode;
 
         var generated = new OtpGeneratedIntegrationEvent(
-            request.Destination!,
+            request.Destination,
             request.Channel,
-            request.Purpose!,
+            request.Purpose,
             text)
         {
             UserId = request.UserId
@@ -81,7 +81,7 @@ public class GenerateOtpCommandHandler(
         await unitOfWork.OutboxMessageRepository.AddAsync(
             OutboxMessage.From(request.UserId, generated),
             cancellationToken);
-        
+
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return new GenerateOtpResult(

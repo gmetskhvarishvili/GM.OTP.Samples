@@ -5,7 +5,7 @@ using GM.OTP.Sample.Persistence.Context;
 
 namespace GM.OTP.Sample.Persistence.Repositories;
 
-public class OtpChallengeRepository(ApplicationDbContext context)
+public sealed class OtpChallengeRepository(ApplicationDbContext context)
     : GenericRepository<OtpChallenge,
         ApplicationDbContext>(context), IOtpChallengeRepository;
 

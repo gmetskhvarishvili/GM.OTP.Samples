@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 
 namespace GM.OTP.Sample.Persistence.UnitOfWork;
 
-public class UnitOfWork(
+public sealed class UnitOfWork(
     ApplicationDbContext context,
     IOtpChallengeRepository otpChallengeRepository,
     IInboxMessageRepository inboxMessageRepository,

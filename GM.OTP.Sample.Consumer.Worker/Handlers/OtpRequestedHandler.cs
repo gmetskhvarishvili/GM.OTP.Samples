@@ -3,7 +3,7 @@ using GM.OTP.Sample.Domain.Events.Otp;
 
 namespace GM.OTP.Sample.Consumer.Worker.Handlers;
 
-public class OtpRequestedHandler(IInboxProcessor inbox, ILogger<OtpRequestedHandler> logger)
+public sealed class OtpRequestedHandler(IInboxProcessor inbox, ILogger<OtpRequestedHandler> logger)
 {
     public Task Handle(OtpRequestedIntegrationEvent message, CancellationToken ct)
     {

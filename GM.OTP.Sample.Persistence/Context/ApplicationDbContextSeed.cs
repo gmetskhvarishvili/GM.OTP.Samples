@@ -2,27 +2,18 @@ using Microsoft.Extensions.Logging;
 
 namespace GM.OTP.Sample.Persistence.Context;
 
-public class ApplicationDbContextSeed
+public sealed class ApplicationDbContextSeed
 {
-    public async Task SeedAsync(ApplicationDbContext context,
-        ILogger<ApplicationDbContextSeed> logger, int? retry = 0)
+    // Never instantiated: SeedAsync is static, but the type itself still needs to exist as the
+    // ILogger<ApplicationDbContextSeed> category, so it can't be a static class (CS0718).
+    private ApplicationDbContextSeed()
     {
-        int retryForAvaiability = retry.Value;
-
-        try
-        {
-            
-        }
-        catch (Exception ex)
-        {
-            if (retryForAvaiability < 10)
-            {
-                retryForAvaiability++;
-
-                logger.LogError(ex, "EXCEPTION ERROR while migrating {DbContextName}", nameof(ApplicationDbContext));
-
-                await SeedAsync(context, logger, retryForAvaiability);
-            }
-        }
     }
+
+    /// <summary>
+    /// Extension point for seed data. This sample has none, so it is a documented no-op rather
+    /// than a placeholder try/catch/retry that could never actually run.
+    /// </summary>
+    public static Task SeedAsync(ApplicationDbContext context, ILogger<ApplicationDbContextSeed> logger) =>
+        Task.CompletedTask;
 }

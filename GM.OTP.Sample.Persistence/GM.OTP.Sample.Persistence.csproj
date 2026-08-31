@@ -7,26 +7,31 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="GM.EntityFramework.Persistence" Version="1.2.1" />
-        <PackageReference Include="GM.Messaging.Domain" Version="1.2.0" />
-        <PackageReference Include="GM.Messaging.Persistence" Version="1.2.0" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.10">
+        <PackageReference Include="GM.EntityFramework.Persistence" Version="1.2.2" />
+        <PackageReference Include="GM.Messaging.Domain" Version="1.2.1" />
+        <PackageReference Include="GM.Messaging.Persistence" Version="1.2.1" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.11">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.10">
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.11">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="10.0.10" />
-        <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="10.0.10" />
-        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.10" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="10.0.11" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="10.0.11" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.11" />
+        <!-- Pinned explicitly: GM.Messaging.Persistence only floors Microsoft.EntityFrameworkCore.Relational
+             at 10.0.10, which is lower than the 10.0.11 patch used elsewhere in this solution. Raising the
+             floor here keeps every project that references this one (Consumer/Producer/Worker) resolving
+             the same assembly version instead of hitting an MSBuild MSB3277 conflict. -->
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.11" />
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.3" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="GM.OTP" Version="1.1.0" />
-        <PackageReference Include="GM.OTP.Persistence" Version="1.1.0" />
+        <PackageReference Include="GM.OTP" Version="1.1.1" />
+        <PackageReference Include="GM.OTP.Persistence" Version="1.1.1" />
         <ProjectReference Include="..\GM.OTP.Sample.Application\GM.OTP.Sample.Application.csproj" />
         <ProjectReference Include="..\GM.OTP.Sample.Common\GM.OTP.Sample.Common.csproj" />
         <ProjectReference Include="..\GM.OTP.Sample.Domain\GM.OTP.Sample.Domain.csproj" />

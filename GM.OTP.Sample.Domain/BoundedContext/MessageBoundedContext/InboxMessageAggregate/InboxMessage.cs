@@ -2,7 +2,7 @@ using GM.EntityFramework.Domain.Abstractions;
 
 namespace GM.OTP.Sample.Domain.BoundedContext.MessageBoundedContext.InboxMessageAggregate;
 
-public class InboxMessage : GM.Messaging.Domain.Inbox.InboxMessage, IAggregateRoot
+public sealed class InboxMessage : GM.Messaging.Domain.Inbox.InboxMessage, IAggregateRoot
 {
     private InboxMessage() { }
 

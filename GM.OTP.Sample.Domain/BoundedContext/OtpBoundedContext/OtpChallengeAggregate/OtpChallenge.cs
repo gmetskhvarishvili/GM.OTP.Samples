@@ -2,7 +2,7 @@ using GM.EntityFramework.Domain.Abstractions;
 
 namespace GM.OTP.Sample.Domain.BoundedContext.OtpBoundedContext.OtpChallengeAggregate;
 
-public class OtpChallenge : GM.OTP.Domain.Entities.OtpChallenge, IAggregateRoot
+public sealed class OtpChallenge : GM.OTP.Domain.Entities.OtpChallenge, IAggregateRoot
 {
     // For EF materialization; delegates to the protected base parameterless constructor.
     private OtpChallenge()

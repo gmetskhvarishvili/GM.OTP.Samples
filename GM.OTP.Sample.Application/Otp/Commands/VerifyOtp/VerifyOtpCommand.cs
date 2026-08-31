@@ -6,14 +6,14 @@ using GM.OTP.Services;
 
 namespace GM.OTP.Sample.Application.Otp.Commands.VerifyOtp;
 
-public class VerifyOtpCommand : IRequest<VerifyOtpResult>
+public sealed record VerifyOtpCommand : IRequest<VerifyOtpResult>
 {
-    public string? Subject { get; set; }
-    public string? Purpose { get; set; }
-    public string? Code { get; set; }
+    public required string Subject { get; init; }
+    public required string Purpose { get; init; }
+    public required string Code { get; init; }
 }
 
-public class VerifyOtpCommandValidator : AbstractValidator<VerifyOtpCommand>
+public sealed class VerifyOtpCommandValidator : AbstractValidator<VerifyOtpCommand>
 {
     public VerifyOtpCommandValidator()
     {
@@ -23,7 +23,7 @@ public class VerifyOtpCommandValidator : AbstractValidator<VerifyOtpCommand>
     }
 }
 
-public class VerifyOtpCommandHandler(
+public sealed class VerifyOtpCommandHandler(
     OtpManager otpManager,
     IUnitOfWork unitOfWork)
     : IRequestHandler<VerifyOtpCommand, VerifyOtpResult>
@@ -46,7 +46,7 @@ public class VerifyOtpCommandHandler(
         if (challenge is null)
             return new VerifyOtpResult(false, "Active OTP not found.");
 
-        var result = otpManager.Verify(challenge, request.Code!);
+        var result = otpManager.Verify(challenge, request.Code);
 
         unitOfWork.OtpChallengeRepository.Update(challenge);
         await unitOfWork.SaveChangesAsync(cancellationToken);

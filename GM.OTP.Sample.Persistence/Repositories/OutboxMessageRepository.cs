@@ -6,11 +6,11 @@ using GM.OTP.Sample.Persistence.Context;
 
 namespace GM.OTP.Sample.Persistence.Repositories;
 
-public class OutboxMessageRepository(ApplicationDbContext context)
+public sealed class OutboxMessageRepository(ApplicationDbContext context)
     : GenericRepository<OutboxMessage, ApplicationDbContext>(context), IOutboxMessageRepository, IOutboxDbContext<OutboxMessage>
 {
-    IQueryable<OutboxMessage> IOutboxDbContext<OutboxMessage>.OutboxMessages => context.Set<OutboxMessage>();
+    IQueryable<OutboxMessage> IOutboxDbContext<OutboxMessage>.OutboxMessages => _context.Set<OutboxMessage>();
 
     Task<int> IOutboxDbContext<OutboxMessage>.SaveChangesAsync(CancellationToken cancellationToken) =>
-        context.SaveChangesAsync(cancellationToken);
+        _context.SaveChangesAsync(cancellationToken);
 }

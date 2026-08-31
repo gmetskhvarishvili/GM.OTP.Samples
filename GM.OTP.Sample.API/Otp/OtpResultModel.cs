@@ -1,15 +1,21 @@
 namespace GM.OTP.Sample.API.Otp;
 
-public class GenerateOtpResultModel
+/// <summary>
+/// Result of generating an OTP challenge.
+/// </summary>
+public sealed record GenerateOtpResultModel
 {
-    public Guid ChallengeId { get; set; }
-    public DateTime ExpiresAtUtc { get; set; }
-    public string? Message { get; set; }
+    public required Guid ChallengeId { get; init; }
+    public required DateTime ExpiresAtUtc { get; init; }
+    public string? Message { get; init; }
 }
 
-public class VerifyOtpResultModel
+/// <summary>
+/// Result of verifying an OTP challenge.
+/// </summary>
+public sealed record VerifyOtpResultModel
 {
-    public bool IsValid { get; set; }
-    public string? Message { get; set; }
-    public Guid? ChallengeId { get; set; }
+    public required bool IsValid { get; init; }
+    public string? Message { get; init; }
+    public Guid? ChallengeId { get; init; }
 }

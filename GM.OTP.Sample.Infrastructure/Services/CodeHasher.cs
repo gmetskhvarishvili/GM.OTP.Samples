@@ -4,7 +4,7 @@ using GM.OTP.Domain.Abstractions;
 
 namespace GM.OTP.Sample.Infrastructure.Services;
 
-public class CodeHasher : ICodeHasher
+public sealed class CodeHasher : ICodeHasher
 {
     public string Hash(string value, string salt)
     {
