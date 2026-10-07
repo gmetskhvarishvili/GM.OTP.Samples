@@ -7,7 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="GM.OTP" Version="1.1.1" />
+      <PackageReference Include="GM.OTP" Version="1.2.0" />
       <ProjectReference Include="..\GM.OTP.Sample.Application\GM.OTP.Sample.Application.csproj" />
       <ProjectReference Include="..\GM.OTP.Sample.Common\GM.OTP.Sample.Common.csproj" />
     </ItemGroup>

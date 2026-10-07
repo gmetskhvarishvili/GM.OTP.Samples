@@ -7,7 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="GM.EntityFramework.Persistence" Version="1.2.2" />
+        <PackageReference Include="GM.EntityFramework.Persistence" Version="1.4.0" />
         <PackageReference Include="GM.Messaging.Domain" Version="1.2.1" />
         <PackageReference Include="GM.Messaging.Persistence" Version="1.2.1" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.11">
@@ -30,8 +30,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="GM.OTP" Version="1.1.1" />
-        <PackageReference Include="GM.OTP.Persistence" Version="1.1.1" />
+        <PackageReference Include="GM.OTP" Version="1.2.0" />
+        <PackageReference Include="GM.OTP.Persistence" Version="1.2.0" />
         <ProjectReference Include="..\GM.OTP.Sample.Application\GM.OTP.Sample.Application.csproj" />
         <ProjectReference Include="..\GM.OTP.Sample.Common\GM.OTP.Sample.Common.csproj" />
         <ProjectReference Include="..\GM.OTP.Sample.Domain\GM.OTP.Sample.Domain.csproj" />

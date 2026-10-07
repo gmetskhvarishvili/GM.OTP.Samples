@@ -26,6 +26,7 @@ public sealed class InboxProcessorWorker(
     private static readonly Dictionary<string, string> EventTypeMap = new()
     {
         { nameof(UserConfirmationInitiatedIntegrationEvent), typeof(UserConfirmationInitiatedIntegrationEvent).FullName! },
+        { nameof(TwoFactorChallengeIssuedIntegrationEvent), typeof(TwoFactorChallengeIssuedIntegrationEvent).FullName! },
         { nameof(OtpRequestedIntegrationEvent), typeof(OtpRequestedIntegrationEvent).FullName! }
     };
 
@@ -166,6 +167,10 @@ public sealed class InboxProcessorWorker(
                 await HandleUserConfirmationInitiatedAsync(payload, mediator, cancellationToken);
                 break;
 
+            case var t when t.EndsWith(nameof(TwoFactorChallengeIssuedIntegrationEvent), StringComparison.Ordinal):
+                await HandleTwoFactorChallengeIssuedAsync(payload, mediator, cancellationToken);
+                break;
+
             case var t when t.EndsWith(nameof(OtpRequestedIntegrationEvent), StringComparison.Ordinal):
                 await HandleOtpRequestedAsync(payload, mediator, cancellationToken);
                 break;
@@ -186,6 +191,25 @@ public sealed class InboxProcessorWorker(
             Destination = evt.Subject,
             Purpose = OtpPurpose.ConfirmUser,
             Channel = evt.ConfirmationType,
+            UserId = evt.UserId
+        };
+
+        await mediator.Send(command, cancellationToken);
+    }
+
+    private static async Task HandleTwoFactorChallengeIssuedAsync(string payload, IMediator mediator, CancellationToken cancellationToken)
+    {
+        var evt = JsonSerializer.Deserialize<TwoFactorChallengeIssuedIntegrationEvent>(payload)
+                  ?? throw new InvalidOperationException("Inbox payload could not be deserialized.");
+
+        // The subject is the user's contact (email/phone); deliver over the default channel. The purpose
+        // must match what GM.Identity validates the second factor against (grant_type=two_factor).
+        var command = new GenerateOtpCommand
+        {
+            Subject = evt.Subject,
+            Destination = evt.Subject,
+            Purpose = OtpPurpose.TwoFactor,
+            Channel = 0,
             UserId = evt.UserId
         };
 
