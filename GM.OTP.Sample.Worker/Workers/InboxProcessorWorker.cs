@@ -202,14 +202,15 @@ public sealed class InboxProcessorWorker(
         var evt = JsonSerializer.Deserialize<TwoFactorChallengeIssuedIntegrationEvent>(payload)
                   ?? throw new InvalidOperationException("Inbox payload could not be deserialized.");
 
-        // The subject is the user's contact (email/phone); deliver over the default channel. The purpose
-        // must match what GM.Identity validates the second factor against (grant_type=two_factor).
+        // The code is stored under Subject (what GM.Identity verifies against) and sent to Destination over the
+        // channel the user picked at login. The purpose must match what GM.Identity validates the second factor
+        // against (grant_type=two_factor).
         var command = new GenerateOtpCommand
         {
             Subject = evt.Subject,
-            Destination = evt.Subject,
+            Destination = evt.Destination ?? evt.Subject,
             Purpose = OtpPurpose.TwoFactor,
-            Channel = 0,
+            Channel = evt.Channel,
             UserId = evt.UserId
         };
 
