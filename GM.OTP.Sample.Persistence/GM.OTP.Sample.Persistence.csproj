@@ -9,7 +9,8 @@
     <ItemGroup>
         <PackageReference Include="GM.EntityFramework.Persistence" Version="2.0.0" />
         <PackageReference Include="GM.Messaging.Domain" Version="1.3.0" />
-        <PackageReference Include="GM.Messaging.Persistence" Version="1.3.0" />
+        <!-- GM.Messaging (not just GM.Messaging.Persistence) so AddPersistence can register the outbox relay worker. -->
+        <PackageReference Include="GM.Messaging" Version="1.3.0" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.11">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

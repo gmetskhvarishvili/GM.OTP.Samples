@@ -166,7 +166,7 @@ namespace GM.OTP.Sample.Persistence.Migrations
                     b.HasIndex("UserId")
                         .HasDatabaseName("ix_inbox_messages_user_id");
 
-                    b.ToTable("inbox_messages", "inbox_messages");
+                    b.ToTable("inbox_messages", "messaging");
                 });
 
             modelBuilder.Entity("GM.OTP.Sample.Domain.BoundedContext.MessageBoundedContext.OutboxMessageAggregate.OutboxMessage", b =>
@@ -219,7 +219,7 @@ namespace GM.OTP.Sample.Persistence.Migrations
                     b.HasIndex("UserId")
                         .HasDatabaseName("ix_outbox_messages_user_id");
 
-                    b.ToTable("outbox_messages", "outbox_messages");
+                    b.ToTable("outbox_messages", "messaging");
                 });
 
             modelBuilder.Entity("GM.OTP.Sample.Domain.BoundedContext.OtpBoundedContext.OtpChallengeAggregate.OtpChallenge", b =>
