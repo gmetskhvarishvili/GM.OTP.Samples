@@ -1,6 +1,8 @@
+using GM.Messaging;
 using GM.Messaging.Persistence;
 using GM.OTP.Sample.Domain.BoundedContext.MessageBoundedContext.InboxMessageAggregate;
 using GM.OTP.Sample.Domain.BoundedContext.MessageBoundedContext.InboxMessageAggregate.Interfaces;
+using GM.OTP.Sample.Domain.BoundedContext.MessageBoundedContext.OutboxMessageAggregate;
 using GM.OTP.Sample.Domain.BoundedContext.MessageBoundedContext.OutboxMessageAggregate.Interfaces;
 using GM.OTP.Sample.Domain.BoundedContext.OtpBoundedContext.OtpChallengeAggregate.Interfaces;
 using GM.OTP.Sample.Domain.SeedWork;
@@ -14,7 +16,7 @@ namespace GM.OTP.Sample.Persistence;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddPersistence(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddPersistence(this IServiceCollection services, IConfiguration configuration, bool runOutboxRelay = false)
     {
         services.AddEntityFrameworkNpgsql();
 
@@ -33,6 +35,11 @@ public static class DependencyInjection
         services.AddTransient<IInboxMessageRepository, InboxMessageRepository>();
         services.AddTransient<IOutboxMessageRepository, OutboxMessageRepository>();
         services.AddTransient<IUnitOfWork, UnitOfWork.UnitOfWork>();
+
+        // Only the process that relays the outbox (the producer worker) passes true; the API and the
+        // background worker must not, or several pollers would read the same outbox table and publish twice.
+        if (runOutboxRelay)
+            services.AddGMOutboxRelay<OutboxMessage, ApplicationDbContext>();
 
         return services;
     }

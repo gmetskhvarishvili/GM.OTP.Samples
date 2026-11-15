@@ -1,5 +1,3 @@
-using GM.Messaging;
-using GM.OTP.Sample.Domain.BoundedContext.MessageBoundedContext.OutboxMessageAggregate;
 using GM.OTP.Sample.Infrastructure;
 using GM.OTP.Sample.Persistence;
 using GM.OTP.Sample.Persistence.Context;
@@ -8,8 +6,7 @@ using Microsoft.EntityFrameworkCore;
 var builder = Host.CreateApplicationBuilder(args);
 
 builder.Services.AddProducerWorkerInfrastructure(builder.Configuration);
-builder.Services.AddPersistence(builder.Configuration);
-builder.Services.AddGMOutboxRelay<OutboxMessage, ApplicationDbContext>();
+builder.Services.AddPersistence(builder.Configuration, runOutboxRelay: true);
 
 var app = builder.Build();
 
