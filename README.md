@@ -38,10 +38,12 @@ Only the published **GM.*** packages are referenced — no project references in
 - **OTP generation & verification** — `GenerateOtp` issues a salted, subject/destination-bound code
   via `GM.OTP`'s `OtpManager` and persists an `OtpChallenge`; `VerifyOtp` checks a submitted code.
 - **Outbox → messaging** — the generated code is published as an `OtpGeneratedIntegrationEvent`
-  through the GM.Messaging outbox for a downstream service to deliver. The producer worker
-  registers the relay with `AddGMOutboxRelay<OutboxMessage, ApplicationDbContext>()`, and the
-  consumer worker registers its inbox with `AddGMInbox<InboxMessage, ApplicationDbContext>()`. No
-  custom store code is needed.
+  through the GM.Messaging outbox for a downstream service to deliver. Only the producer worker
+  relays the outbox: it calls `AddPersistence(configuration, runOutboxRelay: true)`, while the API
+  and the background worker call `AddPersistence` without the flag, so the outbox is never polled
+  and published twice. The consumer worker registers its inbox with
+  `AddGMInbox<InboxMessage, ApplicationDbContext>()`. The `outbox_messages` and `inbox_messages`
+  tables share a `messaging` schema.
 - **CQRS + validation** — mediator commands with FluentValidation.
 
 ## Requirements
