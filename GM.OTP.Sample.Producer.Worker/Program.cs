@@ -1,4 +1,4 @@
-using GM.Messaging.Workers;
+using GM.Messaging;
 using GM.OTP.Sample.Domain.BoundedContext.MessageBoundedContext.OutboxMessageAggregate;
 using GM.OTP.Sample.Infrastructure;
 using GM.OTP.Sample.Persistence;
@@ -9,7 +9,7 @@ var builder = Host.CreateApplicationBuilder(args);
 
 builder.Services.AddProducerWorkerInfrastructure(builder.Configuration);
 builder.Services.AddPersistence(builder.Configuration);
-builder.Services.AddHostedService<OutboxRelayWorker<OutboxMessage>>();
+builder.Services.AddGMOutboxRelay<OutboxMessage, ApplicationDbContext>();
 
 var app = builder.Build();
 
