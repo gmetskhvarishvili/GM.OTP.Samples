@@ -1,9 +1,6 @@
 using GM.Messaging.Persistence;
-using GM.Messaging.Persistence.Inbox;
-using GM.Messaging.Persistence.Outbox;
 using GM.OTP.Sample.Domain.BoundedContext.MessageBoundedContext.InboxMessageAggregate;
 using GM.OTP.Sample.Domain.BoundedContext.MessageBoundedContext.InboxMessageAggregate.Interfaces;
-using GM.OTP.Sample.Domain.BoundedContext.MessageBoundedContext.OutboxMessageAggregate;
 using GM.OTP.Sample.Domain.BoundedContext.MessageBoundedContext.OutboxMessageAggregate.Interfaces;
 using GM.OTP.Sample.Domain.BoundedContext.OtpBoundedContext.OtpChallengeAggregate.Interfaces;
 using GM.OTP.Sample.Domain.SeedWork;
@@ -35,7 +32,6 @@ public static class DependencyInjection
         services.AddTransient<IOtpChallengeRepository, OtpChallengeRepository>();
         services.AddTransient<IInboxMessageRepository, InboxMessageRepository>();
         services.AddTransient<IOutboxMessageRepository, OutboxMessageRepository>();
-        services.AddTransient<IOutboxDbContext<OutboxMessage>, OutboxMessageRepository>();
         services.AddTransient<IUnitOfWork, UnitOfWork.UnitOfWork>();
 
         return services;
@@ -59,9 +55,7 @@ public static class DependencyInjection
         services.AddTransient<IOtpChallengeRepository, OtpChallengeRepository>();
         services.AddTransient<IInboxMessageRepository, InboxMessageRepository>();
         services.AddTransient<IOutboxMessageRepository, OutboxMessageRepository>();
-        services.AddTransient<InboxMessageRepository>();
-        services.AddTransient<IInboxStore<InboxMessage>, InboxMessageRepository>();
-        services.AddGMInboxProcessor<InboxMessage>();
+        services.AddGMInbox<InboxMessage, ApplicationDbContext>();
         
         return services;
     }
