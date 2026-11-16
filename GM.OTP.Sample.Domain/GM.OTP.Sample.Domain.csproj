@@ -8,8 +8,8 @@
 
     <ItemGroup>
         <PackageReference Include="GM.EntityFramework.Domain" Version="3.0.0" />
-        <PackageReference Include="GM.Messaging.Domain" Version="4.2.0" />
-        <PackageReference Include="GM.Messaging.Persistence" Version="4.2.0" />
+        <PackageReference Include="GM.Messaging.Domain" Version="4.3.0" />
+        <PackageReference Include="GM.Messaging.Persistence" Version="4.3.0" />
         <PackageReference Include="WolverineFx" Version="6.31.0" />
     </ItemGroup>
 
