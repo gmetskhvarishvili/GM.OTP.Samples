@@ -43,7 +43,10 @@ Only the published **GM.*** packages are referenced — no project references in
   and the background worker call `AddPersistence` without the flag, so publishing stays in one host
   (GM.Messaging 2.0 leases each message, so several relays would also be safe). The `outbox_messages`
   and `inbox_messages` tables share a `messaging` schema; the `UpgradeGMMessagingTo2` and `UpgradeGMMessagingTo3` migrations add
-  the 2.0 and 3.0 columns.
+  the 2.0 and 3.0 columns. GM.Messaging 4.0 needs no database change, but it declares each exchange
+  with the alternate exchange `gm.unrouted`, so messages with no queue bound for them are kept instead of
+  dropped. RabbitMQ won't redeclare an existing exchange with a new argument: on a broker that already
+  has the sample's exchanges, delete them once (the services recreate them when they start).
 - **Inbox → OTP** — the consumer worker stores each incoming request with `IngestAsync`, and the
   background worker runs GM.Messaging's inbox worker (`AddGMInboxWorker`) with one
   `IInboxHandler<TEvent>` per event (`Worker/InboxHandlers`), registered with `AddGMInboxHandler`.
