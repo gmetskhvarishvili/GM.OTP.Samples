@@ -40,10 +40,11 @@ Only the published **GM.*** packages are referenced — no project references in
 - **Outbox → messaging** — the generated code is published as an `OtpGeneratedIntegrationEvent`
   through the GM.Messaging outbox for a downstream service to deliver. Only the producer worker
   relays the outbox: it calls `AddPersistence(configuration, runOutboxRelay: true)`, while the API
-  and the background worker call `AddPersistence` without the flag, so the outbox is never polled
-  and published twice. The consumer worker registers its inbox with
+  and the background worker call `AddPersistence` without the flag, so publishing stays in one host
+  (GM.Messaging 2.0 leases each message, so several relays would also be safe). The consumer worker
+  registers its inbox with
   `AddGMInbox<InboxMessage, ApplicationDbContext>()`. The `outbox_messages` and `inbox_messages`
-  tables share a `messaging` schema.
+  tables share a `messaging` schema; the `UpgradeGMMessagingTo2` migration adds the 2.0 columns.
 - **CQRS + validation** — mediator commands with FluentValidation.
 
 ## Requirements
