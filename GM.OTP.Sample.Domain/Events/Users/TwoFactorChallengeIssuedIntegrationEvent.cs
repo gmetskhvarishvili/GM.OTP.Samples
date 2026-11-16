@@ -10,6 +10,6 @@ namespace GM.OTP.Sample.Domain.Events.Users;
 // Channel default so messages from a publisher that predates them still go to Subject by email.
 [MessageIdentity("user.twofactor.challenge")]
 public sealed record TwoFactorChallengeIssuedIntegrationEvent(
-    string Subject,
+    [property: SensitiveData] string Subject,
     [property: SensitiveData] string? Destination = null,
     int Channel = 0) : IntegrationEvent;

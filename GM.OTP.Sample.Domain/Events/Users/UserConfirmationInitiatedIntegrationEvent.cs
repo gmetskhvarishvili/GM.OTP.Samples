@@ -7,5 +7,5 @@ namespace GM.OTP.Sample.Domain.Events.Users;
 // local type from the incoming cross-service message-type header.
 [MessageIdentity("user.confirmation.initiated")]
 public sealed record UserConfirmationInitiatedIntegrationEvent(
-    string Subject,
+    [property: SensitiveData] string Subject,
     int ConfirmationType) : IntegrationEvent;
