@@ -1,3 +1,4 @@
+using GM.Messaging.Persistence.Protection;
 using GM.Messaging;
 using GM.Messaging.Persistence;
 using GM.OTP.Sample.Domain.BoundedContext.MessageBoundedContext.InboxMessageAggregate;
@@ -36,6 +37,9 @@ public static class DependencyInjection
         services.AddTransient<IOutboxMessageRepository, OutboxMessageRepository>();
         services.AddTransient<IUnitOfWork, UnitOfWork.UnitOfWork>();
 
+        // The key ring for [SensitiveData] values (Messaging:SensitiveData): OTP destinations and codes travel encrypted.
+        services.AddGMSensitiveData(configuration);
+
         // Every host can inspect the outbox and requeue dead letters (the API maps it under /admin/messaging).
         services.AddGMOutboxAdministration<OutboxMessage, ApplicationDbContext>();
 
@@ -66,6 +70,7 @@ public static class DependencyInjection
         services.AddTransient<IInboxMessageRepository, InboxMessageRepository>();
         services.AddTransient<IOutboxMessageRepository, OutboxMessageRepository>();
         services.AddGMInbox<InboxMessage, ApplicationDbContext>();
+        services.AddGMSensitiveData(configuration); // decrypts [SensitiveData] values of incoming events
         
         return services;
     }

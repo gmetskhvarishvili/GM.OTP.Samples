@@ -47,6 +47,10 @@ Only the published **GM.*** packages are referenced — no project references in
   with the alternate exchange `gm.unrouted`, so messages with no queue bound for them are kept instead of
   dropped. RabbitMQ won't redeclare an existing exchange with a new argument: on a broker that already
   has the sample's exchanges, delete them once (the services recreate them when they start).
+- **Personal data in events** — OTP destinations and the message carrying the code are `[SensitiveData]`
+  (GM.Messaging 4.4): encrypted in the outbox, the inbox and on RabbitMQ, plain in handlers. The key ring
+  is `Messaging:SensitiveData` (a sample key in appsettings; use a secret store in production), shared with
+  the Identity and Notifications samples.
 - **Outbox admin** — the API maps GM.Messaging's admin endpoints (`MapGMMessagingAdmin`) under
   `/admin/messaging/outbox`: backlog, dead letters, requeue and purge. They require the `messaging-admin`
   policy, which accepts an API key in the `X-Admin-Key` header (`Admin:ApiKey`; `local-dev-admin-key` in

@@ -11,5 +11,5 @@ namespace GM.OTP.Sample.Domain.Events.Users;
 [MessageIdentity("user.twofactor.challenge")]
 public sealed record TwoFactorChallengeIssuedIntegrationEvent(
     string Subject,
-    string? Destination = null,
+    [property: SensitiveData] string? Destination = null,
     int Channel = 0) : IntegrationEvent;

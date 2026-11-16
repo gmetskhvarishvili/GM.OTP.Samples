@@ -13,7 +13,7 @@ namespace GM.OTP.Sample.Domain.Events.Otp;
 // of this contract, different namespace) resolves the same Wolverine message-type.
 [MessageIdentity("otp.generated")]
 public sealed record OtpGeneratedIntegrationEvent(
-    string Destination,
+    [property: SensitiveData] string Destination,
     int Channel,
     string Purpose,
-    string Message) : IntegrationEvent;
+    [property: SensitiveData] string Message) : IntegrationEvent;
