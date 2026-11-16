@@ -1,3 +1,4 @@
+using GM.OTP.Sample.API.Admin;
 using GM.API.Startup;
 using GM.OTP;
 using GM.OTP.Sample.Infrastructure;
@@ -18,6 +19,9 @@ builder.Services.AddGMOtp();
 builder.Services.AddPersistence(builder.Configuration);
 builder.Services.AddInfrastructure(builder.Configuration);
 
+// GM.Messaging's outbox admin endpoints (/admin/messaging/outbox), behind an operations API key (Admin/MessagingAdmin.cs).
+builder.Services.AddMessagingAdmin(builder.Configuration);
+
 builder.Services.AddHealthChecks();
 
 var app = builder.Build();
@@ -28,6 +32,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseGMServices();
+app.MapMessagingAdmin();
 
 // Liveness must not depend on downstream dependencies, so it runs no checks; readiness runs
 // every registered health check (none here yet). See engineering baseline §11.

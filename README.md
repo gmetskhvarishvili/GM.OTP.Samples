@@ -47,6 +47,10 @@ Only the published **GM.*** packages are referenced — no project references in
   with the alternate exchange `gm.unrouted`, so messages with no queue bound for them are kept instead of
   dropped. RabbitMQ won't redeclare an existing exchange with a new argument: on a broker that already
   has the sample's exchanges, delete them once (the services recreate them when they start).
+- **Outbox admin** — the API maps GM.Messaging's admin endpoints (`MapGMMessagingAdmin`) under
+  `/admin/messaging/outbox`: backlog, dead letters, requeue and purge. They require the `messaging-admin`
+  policy, which accepts an API key in the `X-Admin-Key` header (`Admin:ApiKey`; `local-dev-admin-key` in
+  development), and answer 401 without it. See `GM.OTP.Sample.API/Admin/MessagingAdmin.cs`.
 - **Inbox → OTP** — the consumer worker stores each incoming request with `IngestAsync`, and the
   background worker runs GM.Messaging's inbox worker (`AddGMInboxWorker`) with one
   `IInboxHandler<TEvent>` per event (`Worker/InboxHandlers`), registered with `AddGMInboxHandler`.

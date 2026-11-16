@@ -36,6 +36,9 @@ public static class DependencyInjection
         services.AddTransient<IOutboxMessageRepository, OutboxMessageRepository>();
         services.AddTransient<IUnitOfWork, UnitOfWork.UnitOfWork>();
 
+        // Every host can inspect the outbox and requeue dead letters (the API maps it under /admin/messaging).
+        services.AddGMOutboxAdministration<OutboxMessage, ApplicationDbContext>();
+
         // Only the process that relays the outbox (the producer worker) passes true; the API and the
         // background worker must not, or several pollers would read the same outbox table and publish twice.
         if (runOutboxRelay)
