@@ -42,8 +42,8 @@ Only the published **GM.*** packages are referenced — no project references in
   relays the outbox: it calls `AddPersistence(configuration, runOutboxRelay: true)`, while the API
   and the background worker call `AddPersistence` without the flag, so publishing stays in one host
   (GM.Messaging 2.0 leases each message, so several relays would also be safe). The `outbox_messages`
-  and `inbox_messages` tables share a `messaging` schema; the `UpgradeGMMessagingTo2` migration adds
-  the 2.0 columns.
+  and `inbox_messages` tables share a `messaging` schema; the `UpgradeGMMessagingTo2` and `UpgradeGMMessagingTo3` migrations add
+  the 2.0 and 3.0 columns.
 - **Inbox → OTP** — the consumer worker stores each incoming request with `IngestAsync`, and the
   background worker runs GM.Messaging's inbox worker (`AddGMInboxWorker`) with one
   `IInboxHandler<TEvent>` per event (`Worker/InboxHandlers`), registered with `AddGMInboxHandler`.
