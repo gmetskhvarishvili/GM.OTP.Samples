@@ -16,6 +16,6 @@ namespace GM.OTP.Sample.Domain.Events.Otp;
 [MessageIdentity("otp.requested")]
 public sealed record OtpRequestedIntegrationEvent(
     string Subject,
-    string Destination,
+    [property: SensitiveData] string Destination,
     string Purpose,
     int Channel) : IntegrationEvent;
