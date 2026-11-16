@@ -11,7 +11,7 @@ public sealed class TwoFactorChallengeIssuedHandler(IInboxProcessor inbox, ILogg
             "[GM.OTP.Sample.Consumer.Worker] Two-factor challenge issued — Subject: {Subject}",
             message.Subject);
 
-        // Ingest only: the InboxProcessorWorker poller runs GenerateOtp (purpose TwoFactor) for this row.
+        // Ingest only: the inbox worker in GM.OTP.Sample.Worker runs GenerateOtp (purpose TwoFactor) for this row.
         return inbox.IngestAsync(message, "GM.OTP.Sample.Consumer.Worker", ct);
     }
 }

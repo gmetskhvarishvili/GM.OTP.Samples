@@ -11,7 +11,7 @@ public sealed class OtpRequestedHandler(IInboxProcessor inbox, ILogger<OtpReques
             "[GM.OTP.Sample.Consumer.Worker] OTP requested — Subject: {Subject}, Destination: {Destination}, Purpose: {Purpose}, Channel: {Channel}",
             message.Subject, message.Destination, message.Purpose, message.Channel);
 
-        // Ingest only: the InboxProcessorWorker poller runs GenerateOtp for this row.
+        // Ingest only: the inbox worker in GM.OTP.Sample.Worker runs GenerateOtp for this row.
         return inbox.IngestAsync(message, "GM.OTP.Sample.Consumer.Worker", ct);
     }
 }

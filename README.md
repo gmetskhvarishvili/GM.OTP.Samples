@@ -26,7 +26,7 @@ GM.OTP.Samples/
 ├── GM.OTP.Sample.Common          # Shared resources
 ├── GM.OTP.Sample.Producer.Worker # Relays the outbox to RabbitMQ
 ├── GM.OTP.Sample.Consumer.Worker # Consumes inbound OTP-request events
-├── GM.OTP.Sample.Worker          # Background processing
+├── GM.OTP.Sample.Worker          # GM.Messaging inbox worker: ingested events → GenerateOtp
 └── tests/
     └── GM.OTP.Sample.Tests       # command-validator, event, and aggregate unit tests
 ```
@@ -41,10 +41,15 @@ Only the published **GM.*** packages are referenced — no project references in
   through the GM.Messaging outbox for a downstream service to deliver. Only the producer worker
   relays the outbox: it calls `AddPersistence(configuration, runOutboxRelay: true)`, while the API
   and the background worker call `AddPersistence` without the flag, so publishing stays in one host
-  (GM.Messaging 2.0 leases each message, so several relays would also be safe). The consumer worker
-  registers its inbox with
-  `AddGMInbox<InboxMessage, ApplicationDbContext>()`. The `outbox_messages` and `inbox_messages`
-  tables share a `messaging` schema; the `UpgradeGMMessagingTo2` migration adds the 2.0 columns.
+  (GM.Messaging 2.0 leases each message, so several relays would also be safe). The `outbox_messages`
+  and `inbox_messages` tables share a `messaging` schema; the `UpgradeGMMessagingTo2` migration adds
+  the 2.0 columns.
+- **Inbox → OTP** — the consumer worker stores each incoming request with `IngestAsync`, and the
+  background worker runs GM.Messaging's inbox worker (`AddGMInboxWorker`) with one
+  `IInboxHandler<TEvent>` per event (`Worker/InboxHandlers`), registered with `AddGMInboxHandler`.
+  Each handler sends `GenerateOtpCommand`; the challenge, its `OtpGenerated` outbox row and the
+  inbox row commit together. Failures retry with backoff and are dead-lettered after the last
+  attempt (`Messaging:Inbox` settings).
 - **CQRS + validation** — mediator commands with FluentValidation.
 
 ## Requirements

@@ -11,7 +11,7 @@ public sealed class UserConfirmationInitiatedHandler(IInboxProcessor inbox, ILog
             "[GM.OTP.Sample.Consumer.Worker] User confirmation initiated — Subject: {Subject}, ConfirmationType: {ConfirmationType}",
             message.Subject, message.ConfirmationType);
 
-        // Ingest only: the InboxProcessorWorker poller runs GenerateOtp for this row.
+        // Ingest only: the inbox worker in GM.OTP.Sample.Worker runs GenerateOtp for this row.
         return inbox.IngestAsync(message, "GM.OTP.Sample.Consumer.Worker", ct);
     }
 }
