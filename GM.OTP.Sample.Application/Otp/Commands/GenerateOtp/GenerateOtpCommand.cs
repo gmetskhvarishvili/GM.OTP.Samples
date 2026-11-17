@@ -79,7 +79,7 @@ public sealed class GenerateOtpCommandHandler(
         };
 
         await unitOfWork.OutboxMessageRepository.AddAsync(
-            OutboxMessage.From(request.UserId, generated),
+            OutboxMessage.Create(generated),
             cancellationToken);
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
