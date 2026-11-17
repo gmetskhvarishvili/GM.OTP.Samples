@@ -38,24 +38,31 @@ Only the published **GM.*** packages are referenced — no project references in
 - **OTP generation & verification** — `GenerateOtp` issues a salted, subject/destination-bound code
   via `GM.OTP`'s `OtpManager` and persists an `OtpChallenge`; `VerifyOtp` checks a submitted code.
 - **Outbox → messaging** — the generated code is published as an `OtpGeneratedIntegrationEvent`
-  through the GM.Messaging outbox for a downstream service to deliver. Only the producer worker
-  relays the outbox: it calls `AddPersistence(configuration, runOutboxRelay: true)`, while the API
-  and the background worker call `AddPersistence` without the flag, so publishing stays in one host
-  (GM.Messaging 2.0 leases each message, so several relays would also be safe). The `outbox_messages`
+  through the GM.Messaging outbox for a downstream service to deliver. The sample's `OutboxMessage`
+  derives from GM.Messaging 5.0's `GMOutboxMessage` and is built with `OutboxMessage.Create(evt)`; it is
+  mapped by `OutboxMessageConfiguration : GMOutboxMessageConfiguration<OutboxMessage>`. `AddPersistence`
+  registers the outbox with one call, `AddGMOutbox<OutboxMessage, ApplicationDbContext>(configuration, relay: ...)`
+  (administration, erasure events, save interceptors, the key ring from configuration, and the relay or the
+  wake-up). Only the producer worker relays the outbox: it calls `AddPersistence(configuration, runOutboxRelay: true)`,
+  while the API and the background worker call `AddPersistence` without the flag and wake the relay when they
+  save events (GM.Messaging leases each message, so several relays would also be safe). The `outbox_messages`
   and `inbox_messages` tables share a `messaging` schema; the `UpgradeGMMessagingTo2` and `UpgradeGMMessagingTo3` migrations add
   the 2.0 and 3.0 columns. GM.Messaging 4.0 needs no database change, but it declares each exchange
   with the alternate exchange `gm.unrouted`, so messages with no queue bound for them are kept instead of
   dropped. RabbitMQ won't redeclare an existing exchange with a new argument: on a broker that already
-  has the sample's exchanges, delete them once (the services recreate them when they start).
+  has the sample's exchanges, delete them once (the services recreate them when they start). GM.Messaging
+  5.0 needs no database change either.
 - **Personal data in events** — OTP destinations and the message carrying the code are `[SensitiveData]`
-  (GM.Messaging 4.4): encrypted in the outbox, the inbox and on RabbitMQ, plain in handlers. The key ring
-  is `Messaging:SensitiveData` (a sample key in appsettings; use a secret store in production), shared with
-  the Identity and Notifications samples.
-- **Outbox admin** — the API maps GM.Messaging's admin endpoints (`MapGMMessagingAdmin`) under
-  `/admin/messaging/outbox`: backlog, dead letters, requeue and purge. They require the `messaging-admin`
-  policy, which accepts an API key in the `X-Admin-Key` header (`Admin:ApiKey`; `local-dev-admin-key` in
-  development), and answer 401 without it. See `GM.OTP.Sample.API/Admin/MessagingAdmin.cs`.
-- **Inbox → OTP** — the consumer worker stores each incoming request with `IngestAsync`, and the
+  (since GM.Messaging 4.4): encrypted in the outbox, the inbox and on RabbitMQ, plain in handlers. The key ring is
+  `Messaging:SensitiveData` (a sample key in appsettings; use a secret store in production), shared with
+  the Identity and Notifications samples. `AddGMOutbox(configuration, ...)` and `AddGMInbox(configuration)`
+  register it from that section.
+- **Outbox admin** — the API maps GM.Messaging's admin endpoints in `Program.cs` with
+  `app.MapGMMessagingAdmin(...)`, under `/admin/messaging/outbox`: backlog, dead letters, requeue and purge.
+  The sample has no login, so they're open (`admin.AllowAnonymous = true`); a real service passes its own
+  policy with `admin.AuthorizationPolicy = "your-policy"`.
+- **Inbox → OTP** — the consumer worker (`AddGMInbox<InboxMessage, ApplicationDbContext>(configuration)`)
+  stores each incoming request with `IngestAsync`, and the
   background worker runs GM.Messaging's inbox worker (`AddGMInboxWorker`) with one
   `IInboxHandler<TEvent>` per event (`Worker/InboxHandlers`), registered with `AddGMInboxHandler`.
   Each handler sends `GenerateOtpCommand`; the challenge, its `OtpGenerated` outbox row and the

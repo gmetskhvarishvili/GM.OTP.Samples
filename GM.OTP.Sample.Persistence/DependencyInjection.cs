@@ -1,4 +1,3 @@
-using GM.Messaging.Persistence.Protection;
 using GM.Messaging;
 using GM.Messaging.Persistence;
 using GM.OTP.Sample.Domain.BoundedContext.MessageBoundedContext.InboxMessageAggregate;
@@ -19,9 +18,9 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddPersistence(this IServiceCollection services, IConfiguration configuration, bool runOutboxRelay = false)
     {
-        services.AddEntityFrameworkNpgsql();
-
-        services.AddDbContextPool<ApplicationDbContext>((serviceProvider, options) =>
+        // Pooled contexts with only our own settings: AddGMOutbox (below) attaches GM.Messaging's save interceptors, among them
+        // the one that wakes the relays as soon as a save adds outbox messages.
+        services.AddDbContextPool<ApplicationDbContext>(options =>
         {
             options.UseNpgsql(configuration.GetConnectionString("ApplicationDatabase"),
                 o =>
@@ -29,7 +28,6 @@ public static class DependencyInjection
                     o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
                     o.CommandTimeout(60);
                 }).UseSnakeCaseNamingConvention();
-            options.UseInternalServiceProvider(serviceProvider);
         });
 
         services.AddTransient<IOtpChallengeRepository, OtpChallengeRepository>();
@@ -37,22 +35,19 @@ public static class DependencyInjection
         services.AddTransient<IOutboxMessageRepository, OutboxMessageRepository>();
         services.AddTransient<IUnitOfWork, UnitOfWork.UnitOfWork>();
 
-        // The key ring for [SensitiveData] values (Messaging:SensitiveData): OTP destinations and codes travel encrypted.
-        services.AddGMSensitiveData(configuration);
-
-        // Every host can inspect the outbox and requeue dead letters (the API maps it under /admin/messaging).
-        services.AddGMOutboxAdministration<OutboxMessage, ApplicationDbContext>();
-
-        // Only the process that relays the outbox (the producer worker) passes true; the API and the
-        // background worker must not, or several pollers would read the same outbox table and publish twice.
-        if (runOutboxRelay)
-            services.AddGMOutboxRelay<OutboxMessage, ApplicationDbContext>();
+        // Everything GM.Messaging needs, in one call: outbox administration (the API maps it under /admin/messaging),
+        // erasure events, its save interceptors on ApplicationDbContext, the key ring for [SensitiveData] values
+        // (Messaging:SensitiveData: OTP destinations and codes travel encrypted), and either the relay or the wake-up.
+        // Only the producer worker passes runOutboxRelay: true and publishes the outbox; the API and the background
+        // worker only save events, and wake the relay at once when they do.
+        services.AddGMOutbox<OutboxMessage, ApplicationDbContext>(configuration, relay: runOutboxRelay);
 
         return services;
     }
 
     public static IServiceCollection AddConsumerWorkerPersistence(this IServiceCollection services, IConfiguration configuration)
     {
+        // Only our own settings: AddGMInbox (below) attaches GM.Messaging's save interceptors to this DbContext.
         services.AddDbContext<ApplicationDbContext>(options =>
         {
             options.UseNpgsql(configuration.GetConnectionString("ApplicationDatabase"),
@@ -63,15 +58,10 @@ public static class DependencyInjection
                 }).UseSnakeCaseNamingConvention();
         });
 
-        services.AddTransient<IUnitOfWork, UnitOfWork.UnitOfWork>();
-        // UnitOfWork's constructor needs all three repositories, even though this worker only writes
-        // to the inbox — register them so IUnitOfWork can be resolved.
-        services.AddTransient<IOtpChallengeRepository, OtpChallengeRepository>();
-        services.AddTransient<IInboxMessageRepository, InboxMessageRepository>();
-        services.AddTransient<IOutboxMessageRepository, OutboxMessageRepository>();
-        services.AddGMInbox<InboxMessage, ApplicationDbContext>();
-        services.AddGMSensitiveData(configuration); // decrypts [SensitiveData] values of incoming events
-        
+        // The inbox, its save interceptors on ApplicationDbContext, and the key ring (Messaging:SensitiveData) that
+        // decrypts [SensitiveData] values of incoming events. The handlers only ingest, so nothing else is registered.
+        services.AddGMInbox<InboxMessage, ApplicationDbContext>(configuration);
+
         return services;
     }
 }
