@@ -1,5 +1,5 @@
-using GM.OTP.Sample.API.Admin;
 using GM.API.Startup;
+using GM.Messaging.AspNetCore;
 using GM.OTP;
 using GM.OTP.Sample.Infrastructure;
 using GM.OTP.Sample.Persistence;
@@ -19,9 +19,6 @@ builder.Services.AddGMOtp();
 builder.Services.AddPersistence(builder.Configuration);
 builder.Services.AddInfrastructure(builder.Configuration);
 
-// GM.Messaging's outbox admin endpoints (/admin/messaging/outbox), behind an operations API key (Admin/MessagingAdmin.cs).
-builder.Services.AddMessagingAdmin(builder.Configuration);
-
 builder.Services.AddHealthChecks();
 
 var app = builder.Build();
@@ -32,7 +29,10 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseGMServices();
-app.MapMessagingAdmin();
+// GM.Messaging's admin endpoints under /admin/messaging (this host's outbox: backlog, dead letters, requeue, purge).
+// The sample has no login, so they're open; a real service passes its own policy:
+// admin.AuthorizationPolicy = "your-policy".
+app.MapGMMessagingAdmin(admin => admin.AllowAnonymous = true);
 
 // Liveness must not depend on downstream dependencies, so it runs no checks; readiness runs
 // every registered health check (none here yet). See engineering baseline §11.
