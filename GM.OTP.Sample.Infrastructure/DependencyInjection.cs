@@ -5,7 +5,6 @@ using GM.OTP.Sample.Infrastructure.Services;
 using GM.OTP.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Wolverine;
 
 namespace GM.OTP.Sample.Infrastructure;
 
